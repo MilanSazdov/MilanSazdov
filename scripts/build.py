@@ -66,109 +66,92 @@ NEOFETCH = [
 SECTIONS = {  # key: (command, right-hand comment)
     "timeline": ("cat ~/timeline.log", "# 01 · timeline"),
     "projects": ("ls -la ~/projects", "# 02 · projects"),
-    "achievements": ('grep -E "[0-9](st|nd|th)|finals|onsite" ~/achievements.log', "# 03 · achievements"),
+    "achievements": ("cat ~/achievements.log", "# 03 · achievements"),
     "honors": ("cat ~/honors.txt", "# 04 · honors"),
     "activity": ("git log --graph --since=1.year", "# 05 · activity"),
 }
 
 CHIPS = [  # (file key, label, trailing glyph, href)
     ("linkedin", "linkedin", "↗", LINKEDIN),
-    ("projects", "ls ~/projects", "↓", "#projects"),
+    ("projects", "ls ~/projects", "↗", f"https://github.com/{GH_USER}?tab=repositories"),
 ]
 
-PRE_WIDTH = 84  # columns; keeps <pre> blocks inside GitHub's README column
+RCOL = 97  # right edge (in columns) for right-aligned text inside panels, cards and section headers
 
-
-def a(text, href):
-    return ("a", text, href)
-
-
-def b(text):
-    return ("b", text)
-
-
+# (dates, title, organisation, location, details, stack)
 TIMELINE = [
-    [("2026.04 → now      "), b("Backend Software Engineer"), " · Ominimo · Belgrade / Novi Sad"],
-    ["                   ├─ backend services for an automotive insurance-tech platform"],
-    ["                   ├─ secure high-volume REST APIs: driver, vehicle & policy data"],
-    ["                   ├─ pricing algorithms & validation rule engines in production"],
-    ["                   └─ schema design & SQL query optimization for low-latency reads"],
-    ["                      stack: PHP · Laravel · SQL"],
-    [""],
-    ["2023.10 → now      ", b("BSc Software Engineering & IT"), " · ",
-     a("FTN, University of Novi Sad", "https://ftn.uns.ac.rs")],
-    ["                   ├─ GPA 10.00 / 10.00"],
-    ["                   └─ DSA · OS · OOP · databases · networks · discrete math · stats"],
-    [""],
-    ["2019.09 → 2023.06  ", b('Gymnasium "Jovan Jovanović Zmaj"'), " · specialized CS program"],
-    ["                   └─ GPA 5.00 / 5.00 · Vuk Karadžić Diploma · CS & math diplomas"],
+    ("2026.04 → now", "Backend Software Engineer", "Ominimo", "Belgrade / Novi Sad",
+     ["backend services for an automotive insurance-tech platform",
+      "secure high-volume REST APIs: driver, vehicle & policy data",
+      "pricing algorithms & validation rule engines in production",
+      "schema design & SQL query optimization for low-latency reads"],
+     "PHP · Laravel · SQL"),
+    ("2023.10 → now", "BSc Software Engineering & IT", "FTN, University of Novi Sad", "Novi Sad",
+     ["GPA 10.00 / 10.00",
+      "DSA · OS · OOP · databases · networks · discrete math · stats"],
+     None),
+    ("2019.09 → 2023.06", 'Gymnasium "Jovan Jovanović Zmaj"', "specialized CS program", "Novi Sad",
+     ["GPA 5.00 / 5.00 · Vuk Karadžić Diploma · CS & math diplomas"],
+     None),
 ]
 
-# (badge, name, href, stack, description, highlight)
+# (award, name, href, stack, description, highlight) — each becomes its own clickable card
 PROJECTS = [
-    ("🥇", "matf-suma", "https://github.com/LazarSazdov/MATF-SUMA", "Python · LightGBM · XGBoost",
+    ("1st place", "matf-suma", "https://github.com/LazarSazdov/MATF-SUMA", "Python · LightGBM · XGBoost",
      "1st in quals · 6th in finals — Ominimo × SUMA Data Science Hackathon",
      "reverse-engineers insurance pricing: LightGBM + XGBoost → Ridge stack"),
-    ("🥈", "auto-code-walker", "https://github.com/LazarSazdov/JB-plugin", "Java 21 · IntelliJ SDK",
-     "2nd place, JetBrains Hackathon — AI-guided code tours inside IntelliJ IDEA",
+    ("2nd place", "auto-code-walker", "https://github.com/LazarSazdov/JB-plugin", "Java 21 · IntelliJ SDK",
+     "JetBrains Hackathon — AI-guided code tours inside IntelliJ IDEA",
      "PSI symbol analysis · async OpenAI pipeline + LRU cache: ~75% faster"),
-    ("📂", "nasp-key-value-engine", "https://github.com/MilanSazdov/NASP-key-value-engine", "C++17 · C",
+    (None, "nasp-key-value-engine", "https://github.com/MilanSazdov/NASP-key-value-engine", "C++17 · C",
      "LSM-tree NoSQL storage engine, built from scratch",
      "WAL → Memtable → SSTable · compaction · Bloom · HyperLogLog · Merkle"),
-    ("📂", "shielder-zkml", "https://github.com/MarkoMile/zkml-dataset-proof", "Python · cryptography",
+    (None, "shielder-zkml", "https://github.com/MarkoMile/zkml-dataset-proof", "Python · cryptography",
      "zero-knowledge provenance for ML datasets — verify data, never expose it",
      "Merkle-tree commitments · digital signatures · decoupled verification"),
-    ("📂", "ride-hailing-platform", "https://github.com/kzi-nastava/mrs-team27-Lucky3",
+    (None, "ride-hailing-platform", "https://github.com/kzi-nastava/mrs-team27-Lucky3",
      "Java · Angular · Android",
      "real-time ride-hailing: driver/passenger matching + live geo-tracking",
      "Spring Boot + JWT · Angular web · native Android · WebSockets"),
-    ("📂", "graph-structure-visualizer", "https://github.com/vedranbajic4/graph-structure-visualizer",
+    (None, "graph-structure-visualizer", "https://github.com/vedranbajic4/graph-structure-visualizer",
      "Python · D3.js",
      "plugin-based graph platform: JSON / XML / RDF → live D3.js views",
      "entry-point plugin discovery · 12 design patterns · 14-command CLI"),
-    ("📂", "night-twin", "https://github.com/MilanSazdov/Night-Twin", "FastAPI · React · OpenAI",
+    (None, "night-twin", "https://github.com/MilanSazdov/Night-Twin", "FastAPI · React · OpenAI",
      "AI nightlife recommender that finds the night twin of your ideal night",
      "GPT intent parsing · embeddings + structured matching · guardrails"),
 ]
 PROJECTS_HIDDEN = [
-    ("📂", "search-engine-pdf", "https://github.com/MilanSazdov/search-engine-pdf", "Python · NetworkX",
+    (None, "search-engine-pdf", "https://github.com/MilanSazdov/search-engine-pdf", "Python · NetworkX",
      "PDF search engine: trie index, graph ranking, boolean & phrase queries",
      "autocomplete · pagination · top-10 export with highlights · caching"),
-    ("📂", "checkers-ai", "https://github.com/MilanSazdov/checkers-ai", "Python · Pygame",
+    (None, "checkers-ai", "https://github.com/MilanSazdov/checkers-ai", "Python · Pygame",
      "checkers AI: minimax + alpha-beta pruning, adaptive depth up to 5",
      "material / safety / mobility heuristics · transposition cache · <5 s"),
 ]
 
-LI = "https://www.linkedin.com/posts/milansazdov_"
-# (badge, rank, event (text or link), organizer, optional sub-line)
+# (rank, event, organiser, optional sub-line); 1st/2nd get a filled / outlined pill
 ACHIEVEMENTS = [
-    ("🥇", "1st", a("DeFi Everywhere Hackathon 2025",
-                    "https://www.linkedin.com/feed/update/urn:li:activity:7399936174791884801/"),
-     "Ethereum NS", None),
-    ("🥇", "1st", a("Proggy-Buggy Towel Contest 2025", LI + "proggy-buggy-activity-7334573130612367360-JrUA"),
-     "DataArt · pro", None),
-    ("🥇", "1st", "Ominimo × SUMA DS Hackathon · quals", "MATF Belgrade", None),
-    ("🥈", "2nd", a("JetBrains Hackathon", LI + "jetbrains-intellijidea-java21-activity-7416544191381606401-u8Dp"),
-     "JetBrains", None),
-    ("🏁", "finals", a("Midnight Code Cup 2025 · World Finals",
-                       LI + "midnightcodecup-midnightcodecup2025-lucky3-activity-7353003971571048449-nFSq"),
-     "Recraft × JetBrains", "500+ teams from 50+ countries · one of two Serbian teams in the finals"),
-    ("🏅", "4th", "Bubble Cup 17 · Premier League finals", "Microsoft DC Serbia", None),
-    ("🏅", "6th", "Ominimo × SUMA DS Hackathon · finals", "MATF Belgrade", None),
-    ("⚡", "onsite", a("Reputeo & Yandex AI Hackathon 2025", "https://vinacija.com/hackathon"),
-     "AI Nation", None),
+    ("1st", "DeFi Everywhere Hackathon 2025", "Ethereum NS", None),
+    ("1st", "Proggy-Buggy Towel Contest 2025 · professional", "DataArt", None),
+    ("1st", "Ominimo × SUMA Data Science Hackathon · quals", "MATF, Univ. of Belgrade", None),
+    ("2nd", "JetBrains Hackathon · Auto Code Walker", "JetBrains", None),
+    ("finals", 'Midnight Code Cup 2025 · World Finals, team "Lucky 3"', "Recraft × JetBrains",
+     "500+ teams from 50+ countries · one of two Serbian teams in the finals"),
+    ("4th", "Bubble Cup 17 · Premier League finals", "Microsoft Development Center Serbia", None),
+    ("6th", "Ominimo × SUMA Data Science Hackathon · finals", "MATF, Univ. of Belgrade", None),
+    ("onsite", "Reputeo & Yandex AI Hackathon 2025", "AI Nation, Belgrade", None),
 ]
 
 HONORS = [
-    (a("Studenica Foundation Scholarship", "https://sr.studenica.org/"), "highly selective, merit-based"),
-    (a('"Evro za znanje" Scholarship', "https://www.evrozaznanje.rs/"), "extremely selective"),
-    ("Vuk Karadžić Diploma", "highest national high-school honor"),
-    ('"Zlatna stolica" · Golden Seat', "KK Partizan × EuroLeague, for academics"),
-    (a("Petnica Science Center · Web3 Camp", LI + "zk-zkml-dataprovenance-activity-7361753009602621440-9MJn"),
-     "10-day intensive: Web3 dev & security"),
-    (a("Zero-Knowledge Proofs course", "https://matematickaakademija.com/zkp-kurs/"), "Mathematical Academy"),
-    ("Center for Young Talents, Novi Sad", "excellence in C, math & web"),
-    ("Math & programming competitions", "municipal → national, 2019–2023"),
+    ("Studenica Foundation Scholarship", "highly selective, merit-based"),
+    ('"Evro za znanje" Scholarship', "extremely selective"),
+    ("Vuk Karadžić Diploma", "highest national secondary-school honor"),
+    ('"Zlatna stolica" · Golden Seat', "KK Partizan × EuroLeague, for academic excellence"),
+    ("Petnica Science Center · Web3 Camp", "10-day intensive: Web3 dev, architecture & security"),
+    ("Zero-Knowledge Proofs course", "Mathematical Academy"),
+    ("Center for Young Talents, Novi Sad", "certificates of excellence: C, math, web"),
+    ("Math & programming competitions", "municipal → national rounds, 2019–2023"),
 ]
 
 SNAKE = {  # Platane/snk colours: (snake, five dot levels from empty to busiest)
@@ -187,6 +170,7 @@ THEMES = {
         art=("#b6dcff", "#4493f8", "#1f4fd1"), art_shadow="#1d3766", shine="#ffffff", shine_op=0.55,
         donut=("#1f4a9a", "#3f86f0", "#a8d4ff"),
         chip_bg="#0d1626", chip_border="#1f4f9e", chip_text="#a9cfff",
+        soft="#8ea2c4", pill="#1f6feb", pill_text="#ffffff",
     ),
     "light": dict(
         bg="#f8fafc", bar="#e9eef5", border="#d3dce8", bar_text="#7b8798", shadow="#0f2a5c", shadow_op=0.16,
@@ -196,6 +180,7 @@ THEMES = {
         art=("#60a5fa", "#2563eb", "#1e3a8a"), art_shadow="#bcd3f5", shine="#ffffff", shine_op=0.75,
         donut=("#93b9ee", "#3b7be8", "#0b3a9c"),
         chip_bg="#f1f6ff", chip_border="#9ec2f7", chip_text="#1d4ed8",
+        soft="#56657d", pill="#2563eb", pill_text="#ffffff",
     ),
 }
 PALETTE = [  # neofetch colour strip
@@ -295,7 +280,7 @@ class SVG:
             f"'DejaVu Sans Mono',monospace;font-size:{FS}px;white-space:pre;fill:{t['text']}}}",
             f".t{{fill:{t['text']}}}.d{{fill:{t['dim']}}}.u{{fill:{t['user']}}}.p{{fill:{t['path']}}}"
             f".a{{fill:{t['arrow']}}}.c{{fill:{t['cmd']}}}.k{{fill:{t['cmdword']}}}.s{{fill:{t['str']}}}"
-            f".hl{{fill:{t['hl']}}}.ac{{fill:{t['accent']}}}.key{{fill:{t['key']}}}"
+            f".hl{{fill:{t['hl']}}}.ac{{fill:{t['accent']}}}.key{{fill:{t['key']}}}.so{{fill:{t['soft']}}}"
             ".u,.p,.a,.k,.hl,.b,.key,.chip{font-weight:700}",
             f".tt{{fill:{t['bar_text']};font-size:12px}}",
             "@keyframes ap{to{opacity:1}}@keyframes hd{to{opacity:0}}"
@@ -581,20 +566,150 @@ def build_neofetch(theme):
     return svg
 
 
-def build_section(theme, key):
+def col_x(col):
+    return X0 + col * CW
+
+
+def right(svg, y, segs, end=RCOL):
+    """Segments set so the last character ends exactly on column `end`."""
+    return svg.text(col_x(end - sum(len(t) for t, _ in segs)), y, segs)
+
+
+def dots(left_cols, right_len):
+    return [(" " + "·" * (RCOL - left_cols - right_len - 2) + " ", "d")]
+
+
+def panel(svg, y, h):
+    """Output panel: same surface, border and shadow as the terminal windows, minus the title bar."""
+    t, x, w, r = svg.t, M, svg.w - 2 * M, 10
+    svg.defs.append(
+        f'<filter id="shadow" x="-5%" y="-10%" width="110%" height="130%">'
+        f'<feDropShadow dx="0" dy="4" stdDeviation="4.5" flood-color="{t["shadow"]}" '
+        f'flood-opacity="{t["shadow_op"] * .8:.2f}"/></filter>')
+    svg.add(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{r}" fill="{t["bg"]}" filter="url(#shadow)"/>')
+    svg.add(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{r}" fill="{t["bg"]}"/>')
+    svg.add(f'<rect x="{x + .5}" y="{y + .5}" width="{w - 1}" height="{h - 1}" rx="{r - .5}" fill="none" '
+            f'stroke="{t["border"]}"/>')
+
+
+def pill(svg, x, base, label, kind, width=None):
+    """Small badge: 'fill' (1st), 'line' (2nd) or 'muted' (everything else)."""
+    t, fs = svg.t, 11.5
+    w = width or len(label) * fs * 0.6 + 14
+    fill, stroke, color = {"fill": (t["pill"], t["pill"], t["pill_text"]),
+                           "line": ("none", t["accent"], t["accent"]),
+                           "muted": ("none", t["border"], t["soft"])}[kind]
+    svg.bold.update(label)
+    svg.add(f'<rect x="{f1(x + .5)}" y="{f1(base - 13.5)}" width="{f1(w - 1)}" height="18" rx="9" fill="{fill}" '
+            f'stroke="{stroke}"/><text x="{f1(x + w / 2)}" y="{f1(base - .5)}" text-anchor="middle" '
+            f'style="font-size:{fs}px;font-weight:700;fill:{color}">{escape(label)}</text>')
+    return w
+
+
+def section_header(svg, key, y=0):
     cmd, comment = SECTIONS[key]
-    h, x = 50, M + 2
-    svg = SVG(W, h, theme, f"$ {cmd}", f"Section header: {comment.lstrip('# ')}")
-    t = svg.t
     word, _, rest = cmd.partition(" ")
     # zsh-syntax-highlighting style: command word, quoted strings and plain args get their own colours
     segs = [(word, "k")] + [(part, "s" if part.startswith('"') else "c")
                             for part in re.split(r'("[^"]*")', " " + rest) if part]
-    svg.add(f'<path d="M{x} 10.5H{W - x}" stroke="{t["rule"]}" stroke-dasharray="1 5" stroke-linecap="round" '
-            f'stroke-width="1.5"/>')
-    svg.add(svg.text(x, 38, prompt_segs(segs)))
-    svg.regular.update(comment)
-    svg.add(f'<text x="{W - x}" y="38" text-anchor="end" class="d">{escape(comment)}</text>')
+    svg.add(f'<path d="M{M} {y + 10.5}H{W - M}" stroke="{svg.t["rule"]}" stroke-dasharray="1 5" '
+            f'stroke-linecap="round" stroke-width="1.5"/>')
+    assert PROMPT_LEN + len(cmd) + 2 + len(comment) <= RCOL, f"header too long: {cmd}"
+    svg.add(svg.text(X0, y + 38, prompt_segs(segs)))
+    svg.add(right(svg, y + 38, [(comment, "d")]))
+
+
+BLOCK_ALT = {
+    "timeline": "Timeline: Backend Software Engineer at Ominimo (2026–now); BSc Software Engineering & IT at "
+                "FTN, University of Novi Sad, GPA 10.00 (2023–now); Gymnasium Jovan Jovanović Zmaj, GPA 5.00.",
+    "achievements": "Achievements: 1st DeFi Everywhere Hackathon 2025, 1st Proggy-Buggy Towel Contest 2025, "
+                    "1st Ominimo × SUMA quals, 2nd JetBrains Hackathon, Midnight Code Cup 2025 World Finals, "
+                    "4th Bubble Cup 17, 6th Ominimo × SUMA finals.",
+    "honors": "Honors: Studenica Foundation Scholarship, Evro za znanje Scholarship, Vuk Karadžić Diploma, "
+              "Zlatna stolica, Petnica Web3 Camp, Zero-Knowledge Proofs course.",
+}
+HEAD_H = 50   # section header height
+GAP = 6       # header → panel
+
+
+def build_section(theme, key):
+    svg = SVG(W, HEAD_H, theme, f"$ {SECTIONS[key][0]}", f"Section header: {SECTIONS[key][1].lstrip('# ')}")
+    section_header(svg, key)
+    return svg
+
+
+def build_block(theme, key, rows, desc):
+    """Section header + output panel in one image. `rows` = [(draw(svg, baseline) | None, height)]."""
+    body = sum(hh for _, hh in rows)
+    py = HEAD_H + GAP
+    h = py + 18 + body + 14 + 12
+    svg = SVG(W, h, theme, f"$ {SECTIONS[key][0]}", desc)
+    section_header(svg, key)
+    panel(svg, py, h - py - 12)
+    top = py + 18
+    for draw, hh in rows:
+        if draw:
+            draw(svg, top + 16)
+        top += hh
+    return svg
+
+
+def build_timeline(theme):
+    rows = []
+    for i, (dates, title, org, place, details, stack) in enumerate(TIMELINE):
+        if i:
+            rows.append((None, 12))
+        rows.append((lambda svg, y, d=dates, ti=title, o=org, pl=place: (
+            svg.add(svg.text(X0, y, [(d, "p"), (" " * (19 - len(d)), "d"), (ti, "hl"), (" · ", "d"), (o, "ac")])),
+            svg.add(right(svg, y, [(pl, "so")]))), 22))
+        for j, line in enumerate(details):
+            branch = "└─ " if j == len(details) - 1 else "├─ "
+            rows.append((lambda svg, y, br=branch, ln=line: svg.add(
+                svg.text(col_x(19), y, [(br, "d"), (ln, "t")])), 22))
+        if stack:
+            rows.append((lambda svg, y, st=stack: svg.add(svg.text(col_x(22), y, [(st, "k")])), 22))
+    return build_block(theme, "timeline", rows, BLOCK_ALT["timeline"])
+
+
+def build_achievements(theme):
+    pw = 7 * CW
+    rows = []
+    for rank, event, org, sub in ACHIEVEMENTS:
+        kind = {"1st": "fill", "2nd": "line"}.get(rank, "muted")
+
+        def draw(svg, y, rk=rank, kd=kind, ev=event, og=org):
+            pill(svg, X0, y, rk, kd, width=pw)
+            svg.add(svg.text(col_x(9), y, [(ev, "hl" if kd == "fill" else "t"),
+                                           *dots(9 + len(ev), len(og))]))
+            svg.add(right(svg, y, [(og, "so")]))
+        rows.append((draw, 25))
+        if sub:
+            rows.append((lambda svg, y, sb=sub: svg.add(svg.text(col_x(9), y - 2, [("└─ ", "d"), (sb, "so")])), 23))
+    return build_block(theme, "achievements", rows, BLOCK_ALT["achievements"])
+
+
+def build_honors(theme):
+    rows = [(lambda svg, y, nm=name, nt=note: (
+        svg.add(svg.text(X0, y, [("◆ ", "a"), (nm, "t"), *dots(2 + len(nm), len(nt))])),
+        svg.add(right(svg, y, [(nt, "so")]))), 23) for name, note in HONORS]
+    return build_block(theme, "honors", rows, BLOCK_ALT["honors"])
+
+
+def build_card(theme, project):
+    award, name, _, stack, desc, hi = project
+    h = 92
+    svg = SVG(W, h, theme, name, f"{name}: {desc}")
+    t = svg.t
+    svg.add(f'<rect x="{M + .5}" y="1.5" width="{W - 2 * M - 1}" height="{h - 3}" rx="10" fill="{t["bg"]}" '
+            f'stroke="{t["border"]}"/>')
+    svg.add(svg.text(X0, 32, [("~/projects/", "d"), (name, "u"), (" ↗", "d")]))
+    if award:
+        pill(svg, col_x(11 + len(name) + 3), 32, award, "fill" if award.startswith("1") else "line")
+    svg.add(right(svg, 32, [(stack, "k")]))
+    svg.add(svg.text(X0, 54, [(desc, "t")]))
+    svg.add(svg.text(X0, 75, [("└─ ", "d"), (hi, "so")]))
+    for line in (desc, "└─ " + hi):
+        assert len(line) <= RCOL, f"card line too long: {line}"
     return svg
 
 
@@ -604,17 +719,15 @@ def build_footer(theme):
         ("...saving history...truncating history files...", "d"), ("...completed.", "d"), ("", "d"),
         ("[Process completed]", "t"),
     ]
-    x, lh = M + 2, 21
+    lh = 21
     h = 22 + lh * (len(lines) + 1) + 18
     svg = SVG(W, h, theme, "$ exit", "Session footer: exit, logout, [Process completed].")
-    t = svg.t
-    svg.add(f'<path d="M{x} 10.5H{W - x}" stroke="{t["rule"]}" stroke-dasharray="1 5" stroke-linecap="round" '
+    svg.add(f'<path d="M{M} 10.5H{W - M}" stroke="{svg.t["rule"]}" stroke-dasharray="1 5" stroke-linecap="round" '
             f'stroke-width="1.5"/>')
-    svg.add(svg.text(x, 22 + 16, prompt_segs([("exit", "k")])))
-    svg.regular.update("# thanks for stopping by")
-    svg.add(f'<text x="{W - x}" y="{22 + 16}" text-anchor="end" class="d"># thanks for stopping by</text>')
+    svg.add(svg.text(X0, 38, prompt_segs([("exit", "k")])))
+    svg.add(right(svg, 38, [("# thanks for stopping by", "d")]))
     for i, (s, c) in enumerate(lines):
-        svg.add(svg.text(x, 22 + 16 + (i + 1) * lh, [(s, c)]))
+        svg.add(svg.text(X0, 38 + (i + 1) * lh, [(s, c)]))
     return svg
 
 
@@ -636,78 +749,43 @@ def build_chip(theme, label, glyph):
 
 # ───────────────────────────────────────────────────────────────── README ──
 
-def vis_len(s):
-    return sum(0 if ord(ch) == 0xFE0F else 2 if ord(ch) >= 0x1F000 or ch == "⚡" else 1 for ch in s)
-
-
-def html_line(parts):
-    out, n = [], 0
-    for p in parts:
-        if isinstance(p, str):
-            out.append(escape(p, False))
-            n += vis_len(p)
-        elif p[0] == "a":
-            out.append(f'<a href="{escape(p[2])}">{escape(p[1], False)}</a>')
-            n += vis_len(p[1])
-        else:
-            out.append(f"<b>{escape(p[1], False)}</b>")
-            n += vis_len(p[1])
-    return "".join(out), n
-
-
-def pre(lines):
-    rendered = []
-    for parts in lines:
-        s, n = html_line(parts)
-        if n > PRE_WIDTH:
-            print(f"  ! {n} cols > {PRE_WIDTH}: {s[:70]}…")
-        rendered.append(s.rstrip())
-    return "<pre>\n" + "\n".join(rendered) + "\n</pre>"
-
-
-def leader(left, right, width=PRE_WIDTH):
-    _, nl = html_line(left)
-    _, nr = html_line(right)
-    return [*left, " " + "·" * max(3, width - nl - nr - 2) + " ", *right]
-
-
-def project_lines(items):
-    lines = []
-    for i, (badge, name, href, stack, desc, hi) in enumerate(items):
-        head = [f"{badge} ", a(name, href)]
-        _, n = html_line(head)
-        lines += [[*head, " " * max(2, PRE_WIDTH - n - len(stack)), stack], [f"   {desc}"], [f"   └─ {hi}"]]
-        if i < len(items) - 1:
-            lines.append([""])
-    return lines
+def attr(s):
+    return escape(s, quote=False).replace('"', "&quot;")
 
 
 def picture(key, alt, width="100%", dark=None, light=None):
-    """Theme-aware image: GitHub serves the dark or light SVG to match the viewer's theme."""
+    """Theme-aware image for things that are NOT links: GitHub swaps the source with the viewer's theme."""
     dark, light = dark or f"assets/{key}-dark.svg", light or f"assets/{key}-light.svg"
     size = f' width="{width}"' if width else ""
     return (f'<picture>\n'
             f'  <source media="(prefers-color-scheme: dark)" srcset="{dark}">\n'
             f'  <source media="(prefers-color-scheme: light)" srcset="{light}">\n'
-            f'  <img alt="{escape(alt, quote=False).replace(chr(34), "&quot;")}" src="{dark}"{size}>\n'
+            f'  <img alt="{attr(alt)}" src="{dark}"{size}>\n'
             f'</picture>')
 
 
+def linked(key, alt, href, width=None):
+    """Theme-aware image that IS a link. GitHub breaks <a><picture>, so emit one plain <a><img> per theme;
+    github.com hides any README link whose href ends in #gh-dark-mode-only / #gh-light-mode-only to match."""
+    size = f' width="{width}"' if width else ""
+    return "".join(f'<a href="{attr(href)}#gh-{th}-mode-only"><img alt="{attr(alt)}" '
+                   f'src="assets/{key}-{th}.svg"{size}></a>' for th in THEMES)
+
+
+def cards(items):
+    return "\n".join(linked(f"card-{name}", f"{name} — {desc}", href, width="100%")
+                     for _, name, href, _, desc, _ in items)
+
+
 def build_readme():
-    ach = []
-    for badge, rank, event, org, sub in ACHIEVEMENTS:
-        ach.append(leader([f"{badge} {rank:<8}", event], [org]))
-        if sub:
-            ach.append([f"{' ' * 11}└─ {sub}"])
-    honors = [leader(["◆ ", name], [note]) for name, note in HONORS]
     snake = f"https://raw.githubusercontent.com/{GH_USER}/{GH_USER}/output/snake"
-    chips = "\n".join(f'<a href="{href}">{picture("chip-" + key, label, width=None)}</a>'
-                      for key, label, _, href in CHIPS)
+    chips = "\n".join(linked("chip-" + key, label, href) for key, label, _, href in CHIPS)
     hero_alt = (f"{USER}@{HOST}: figlet 'MILAN SAZDOV' — Backend Software Engineer @ Ominimo · "
                 f"Software Engineering @ FTN Novi Sad")
     neofetch_alt = ("neofetch — Backend Software Engineer @ Ominimo · BSc Software Eng. & IT, FTN Novi Sad · "
                     "GPA 10.00/10.00 · Python, C/C++, Java, SQL, TypeScript")
-    section = {k: picture("section-" + k, "$ " + cmd) for k, (cmd, _) in SECTIONS.items()}
+    block = {k: picture(k, alt) for k, alt in BLOCK_ALT.items()}
+    header = {k: picture("section-" + k, "$ " + SECTIONS[k][0]) for k in ("projects", "activity")}
     snake_pic = picture("", "contribution graph being eaten by a blue snake",
                         dark=snake + "-dark.svg", light=snake + "-light.svg")
     views = (f"https://komarev.com/ghpvc/?username={GH_USER}&amp;label=visitors&amp;color=1f6feb"
@@ -725,32 +803,24 @@ def build_readme():
 
 {picture("neofetch", neofetch_alt)}
 
-{section["timeline"]}
+{block["timeline"]}
 
-{pre(TIMELINE)}
-
-<a name="projects"></a>
-{section["projects"]}
-
-{pre(project_lines(PROJECTS))}
+{header["projects"]}
+{cards(PROJECTS)}
 
 <details>
 <summary><code>ls -la ~/projects/.archive</code> &nbsp;·&nbsp; {len(PROJECTS_HIDDEN)} earlier projects</summary>
+<br>
 
-{pre(project_lines(PROJECTS_HIDDEN))}
+{cards(PROJECTS_HIDDEN)}
 
 </details>
 
-{section["achievements"]}
+{block["achievements"]}
 
-{pre(ach)}
+{block["honors"]}
 
-{section["honors"]}
-
-{pre(honors)}
-
-{section["activity"]}
-
+{header["activity"]}
 {snake_pic}
 
 {picture("footer", "$ exit — logout — [Process completed]")}
@@ -774,9 +844,13 @@ def main():
     assets.mkdir(parents=True, exist_ok=True)
     now = datetime.datetime.now()
 
-    jobs = {"hero": lambda th: build_hero(th, now), "neofetch": build_neofetch, "footer": build_footer}
-    jobs.update({f"section-{k}": (lambda th, k=k: build_section(th, k)) for k in SECTIONS})
+    jobs = {"hero": lambda th: build_hero(th, now), "neofetch": build_neofetch, "footer": build_footer,
+            "timeline": build_timeline, "achievements": build_achievements, "honors": build_honors}
+    jobs.update({f"section-{k}": (lambda th, k=k: build_section(th, k)) for k in ("projects", "activity")})
+    jobs.update({f"card-{p[1]}": (lambda th, p=p: build_card(th, p)) for p in PROJECTS + PROJECTS_HIDDEN})
     jobs.update({f"chip-{k}": (lambda th, l=l, g=g: build_chip(th, l, g)) for k, l, g, _ in CHIPS})
+    for stale in assets.glob("*.svg"):  # drop assets from removed sections / projects
+        stale.unlink()
     for name, fn in jobs.items():
         for theme in THEMES:
             path = assets / f"{name}-{theme}.svg"
